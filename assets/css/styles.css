@@ -1,0 +1,757 @@
+:root {
+    --utc-green: #1D462E;
+    --utc-white: #FFFFFF;
+    --utc-light: #f5f5f5;
+    --utc-dark: #0a1a0f;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--utc-white);
+    color: var(--utc-dark);
+    line-height: 1.6;
+}
+
+/* Panel de usuario */
+#user-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 200px;
+}
+
+#puntos {
+    font-weight: bold;
+    color: var(--utc-green);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+#progreso-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#progreso {
+    flex: 1;
+    height: 10px;
+    border-radius: 5px;
+}
+
+#progreso::-webkit-progress-bar {
+    background-color: var(--utc-light);
+    border-radius: 5px;
+}
+
+#progreso::-webkit-progress-value {
+    background-color: var(--utc-green);
+    border-radius: 5px;
+}
+
+#progreso::-moz-progress-bar {
+    background-color: var(--utc-green);
+    border-radius: 5px;
+}
+
+#progreso-text {
+    font-size: 0.9rem;
+    color: var(--utc-green);
+    font-weight: 600;
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, var(--utc-green), var(--utc-white));
+    color: var(--utc-green);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1.1rem;
+}
+
+/* Navegación */
+nav {
+    background-color: var(--utc-dark);
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav a {
+    color: var(--utc-white);
+    padding: 0.7rem 1.5rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+nav a:hover {
+    background-color: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+nav a.active {
+    background-color: var(--utc-green);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Contenedor del mapa */
+#mapa-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    overflow: hidden;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-marker,
+.custom-marker-satellite {
+    background: transparent;
+    border: none;
+}
+
+/* Contenedor general */
+.lugares-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--utc-green);
+    margin: 3rem 0 2rem;
+    font-size: 1.8rem;
+}
+
+/* Tarjetas de lugares */
+.lugar-card {
+    background: var(--utc-white);
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+    border-left: 5px solid var(--utc-green);
+    border-radius: 0 15px 15px 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.lugar-card:hover {
+    transform: translateX(10px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.lugar-card.visitado {
+    background: #f0fff4;
+    border-left-color: #4caf50;
+}
+
+.lugar-card h3 {
+    color: var(--utc-green);
+    margin-bottom: 0.5rem;
+}
+
+.halcon-badge {
+    background-color: var(--utc-green);
+    color: var(--utc-white);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Botones */
+.btn-visitar,
+.btn-canjear {
+    background: var(--utc-green);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+.btn-visitar:hover:not(:disabled),
+.btn-canjear:hover:not(:disabled) {
+    background: #0e301b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-visitar:disabled,
+.btn-canjear:disabled {
+    background: #4caf50;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Misiones */
+.misiones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.mision-card {
+    background: var(--utc-light);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--utc-green);
+    transition: all 0.3s ease;
+}
+
+.mision-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.mision-card.completada {
+    background: #e8f5e9;
+    border-left-color: #4caf50;
+}
+
+.mision-card h3 {
+    color: var(--utc-green);
+    margin-bottom: 0.5rem;
+}
+
+.mision-recompensa {
+    font-weight: bold;
+    color: var(--utc-green);
+    margin-top: 0.5rem;
+}
+
+.mision-completada-badge {
+    color: #4caf50;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+/* Tienda */
+.tienda-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.recompensa-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid var(--utc-light);
+}
+
+.recompensa-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-color: var(--utc-green);
+}
+
+.recompensa-imagen {
+    height: 200px;
+    background: linear-gradient(135deg, var(--utc-green), #2d6a47);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: white;
+}
+
+.recompensa-body {
+    padding: 1.5rem;
+}
+
+.recompensa-body h3 {
+    color: var(--utc-green);
+    margin-bottom: 0.5rem;
+}
+
+.recompensa-precio {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--utc-green);
+    margin: 1rem 0;
+}
+
+.recompensa-stock {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* Comentarios */
+.comentarios-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.comentario-form {
+    background: var(--utc-light);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.comentario-form h2 {
+    color: var(--utc-green);
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--utc-dark);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--utc-green);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.comentario {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--utc-green);
+}
+
+.comentario-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.comentario-lugar {
+    font-weight: bold;
+    color: var(--utc-green);
+}
+
+.comentario-usuario {
+    font-weight: 600;
+    color: var(--utc-dark);
+    margin: 0.5rem 0;
+}
+
+.comentario-texto {
+    color: #444;
+    line-height: 1.6;
+}
+
+/* Alertas */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+/* Footer */
+footer {
+    background-color: var(--utc-dark);
+    color: var(--utc-white);
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 4rem;
+}
+
+footer a {
+    color: var(--utc-white);
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+}
+
+footer a:hover {
+    opacity: 0.8;
+}
+
+/* Modal de logros */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+}
+
+#logros-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    z-index: 2000;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+}
+
+#logros-modal h3 {
+    color: var(--utc-green);
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #user-panel {
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+        min-width: 150px;
+    }
+    
+    #puntos {
+        font-size: 0.9rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    nav {
+        gap: 0.3rem;
+    }
+    
+    nav a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    #mapa-container {
+        width: 100%;
+        height: 100vh;
+    }
+    
+    .lugar-card {
+        padding: 1rem;
+    }
+    
+    .tienda-grid,
+    .misiones-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.2rem;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    nav a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+}
+/* ============================================================
+   Estilos adicionales — index / satelite / páginas internas
+   ============================================================ */
+
+/* Botón modo oscuro */
+#dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1001;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    color: #1D462E;
+}
+#dark-mode-toggle:hover { background: #1D462E; color: white; transform: scale(1.1); }
+
+/* ── Modo oscuro ── */
+body.dark-mode { background: #0d1f13; color: #e0e0e0; }
+body.dark-mode header { background: linear-gradient(135deg, #0d1f13, #1D462E); color: #e0e0e0; }
+body.dark-mode nav { background: #050f08; }
+body.dark-mode .lugar-card,
+body.dark-mode .mision-card,
+body.dark-mode .recompensa-card,
+body.dark-mode .comentario,
+body.dark-mode .comentario-form,
+body.dark-mode #user-panel { background: #1a2e1f; color: #e0e0e0; border-color: #2d6a47; }
+body.dark-mode footer { background: #050f08; }
+body.dark-mode #dark-mode-toggle { background: #1a2e1f; color: #e0e0e0; }
+
+/* ── Animaciones de marcadores ── */
+@keyframes markerPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    50%       { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-15px); }
+}
+
+/* ── Barra de búsqueda / navegación de ruta ── */
+.search-navigation-container {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 700px;
+}
+.search-box {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+    margin-bottom: 10px;
+}
+.search-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.search-header h4 { margin: 0; color: #1D462E; font-size: 1.1rem; }
+.search-input-wrapper { position: relative; margin-bottom: 10px; }
+.search-select {
+    width: 100%; padding: 12px 40px 12px 15px;
+    border: 2px solid #e0e0e0; border-radius: 10px;
+    font-size: 0.95rem; font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease; background: white; cursor: pointer;
+}
+.search-select:focus { outline: none; border-color: #1D462E; box-shadow: 0 0 0 4px rgba(29,70,46,0.1); }
+.search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none; }
+.route-inputs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+.route-arrow { color: #1D462E; font-size: 1.5rem; font-weight: bold; }
+.create-route-btn {
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white; border: none; padding: 12px 25px;
+    border-radius: 10px; cursor: pointer; font-weight: 600;
+    width: 100%; margin-top: 10px; transition: all 0.3s ease; font-size: 1rem;
+}
+.create-route-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,102,204,0.4); }
+.create-route-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* ── Filtros ── */
+.filter-btn {
+    background: linear-gradient(135deg, #1D462E, #2d6a47);
+    color: white; border: none; padding: 8px 15px; border-radius: 8px;
+    cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem;
+}
+.filter-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(29,70,46,0.4); }
+.filter-btn.active { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1D462E; }
+.filters-panel { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); display: none; }
+.filters-panel.active { display: block; animation: slideDown 0.3s ease; }
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.filter-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.filter-chip {
+    background: #f5f5f5; border: 2px solid #e0e0e0;
+    padding: 8px 15px; border-radius: 20px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease;
+}
+.filter-chip:hover { border-color: #1D462E; background: #e8f5e9; }
+.filter-chip.active { background: linear-gradient(135deg, #1D462E, #2d6a47); color: white; border-color: #1D462E; }
+.filter-chip.halcon { border-color: #FFD700; }
+.filter-chip.halcon:hover { background: #fff8e1; border-color: #FFA500; }
+.filter-chip.halcon.active { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1D462E; }
+
+/* ── Sidebar de lugares ── */
+.places-sidebar {
+    position: absolute; left: 20px; top: 20px; bottom: 20px;
+    width: 320px; background: white; border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    overflow-y: auto; padding: 15px; z-index: 999; display: none;
+}
+.places-sidebar.active { display: block; animation: slideInLeft 0.3s ease; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+.sidebar-header h3 { color: #1D462E; font-size: 1.2rem; margin: 0; }
+.close-sidebar { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; transition: all 0.3s ease; }
+.close-sidebar:hover { color: #dc3545; transform: rotate(90deg); }
+.place-item {
+    background: #f8f9fa; padding: 12px; margin-bottom: 10px;
+    border-radius: 10px; cursor: pointer; transition: all 0.3s ease;
+    border-left: 4px solid #1D462E;
+}
+.place-item:hover { background: #e8f5e9; transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.place-item.visitado { background: #e8f5e9; border-left-color: #4caf50; }
+.place-item.halcon   { border-left-color: #FFD700; }
+.place-item h4 { margin: 0 0 5px 0; color: #1D462E; font-size: 1rem; }
+.place-item p  { margin: 0; font-size: 0.85rem; color: #666; }
+.place-badges  { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+.mini-badge    { font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+
+/* ── Toggle sidebar button ── */
+.toggle-sidebar-btn {
+    position: absolute; left: 20px; top: 20px;
+    background: white; border: none; width: 50px; height: 50px;
+    border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000; transition: all 0.3s ease; color: #1D462E; font-size: 1.2rem;
+}
+.toggle-sidebar-btn:hover { background: #1D462E; color: white; transform: scale(1.05); }
+
+/* ── Controles de ruta activa ── */
+.route-controls {
+    position: absolute; bottom: 20px; right: 20px;
+    background: rgba(255,255,255,0.98); backdrop-filter: blur(10px);
+    padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 1000; max-width: 300px; display: none;
+}
+.route-controls.active { display: block; animation: slideInRight 0.3s ease; }
+.route-controls h4  { margin: 0 0 10px; color: #1D462E; font-size: 1.1rem; }
+.route-controls button {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white; border: none; padding: 10px 15px; border-radius: 8px;
+    cursor: pointer; width: 100%; font-weight: 600; margin-top: 8px; transition: all 0.3s ease;
+}
+.route-controls button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,53,69,0.4); }
+.route-info { background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 0.9rem; }
+.route-info div { margin: 5px 0; display: flex; align-items: center; gap: 8px; }
+.route-path { background: #e3f2fd; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 0.85rem; }
+.route-path strong { color: #0066cc; }
+.leaflet-routing-container { display: none; }
+
+/* ── Stats ── */
+.stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; }
+.stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #1D462E; }
+.stat-value { font-size: 2rem; font-weight: 800; color: #1D462E; }
+.stat-label { font-size: 0.9rem; color: #666; margin-top: 0.3rem; }
+
+/* ── Skeleton loader ── */
+.skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 8px; }
+@keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── Badge colores ── */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+.badge-gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1D462E; }
+
+/* ── Responsive extras ── */
+@media (max-width: 768px) {
+    .search-navigation-container { width: 95%; top: 10px; }
+    .route-inputs { grid-template-columns: 1fr; }
+    .route-arrow  { transform: rotate(90deg); margin: 5px 0; }
+    .places-sidebar { left: 10px; right: 10px; width: auto; top: 80px; }
+    .toggle-sidebar-btn { left: 10px; top: 10px; }
+    .route-controls { left: 10px; right: 10px; bottom: 10px; max-width: none; }
+    .stats-container { grid-template-columns: repeat(2, 1fr); }
+}
