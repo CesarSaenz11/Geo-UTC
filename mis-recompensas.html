@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoUTC - Mis Recompensas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <div id="user-panel">
+        <div id="puntos"><i class="fas fa-coins"></i> <span id="puntos-valor">…</span> pts</div>
+    </div>
+
+    <header>
+        <h1><i class="fas fa-trophy"></i> Mis Recompensas</h1>
+        <p>Recompensas que has canjeado</p>
+    </header>
+
+    <nav>
+        <a href="index.html"><i class="fas fa-map"></i> Mapa</a>
+        <a href="satelite.html"><i class="fas fa-satellite"></i> Satélite</a>
+        <a href="tienda.html"><i class="fas fa-gift"></i> Tienda</a>
+        <a href="mis-recompensas.html" class="active"><i class="fas fa-award"></i> Premios</a>
+        <a href="comentarios.html"><i class="fas fa-comments"></i> Comunidad</a>
+        <a href="historia.html"><i class="fas fa-landmark"></i> Historia</a>
+    </nav>
+
+    <div class="lugares-container">
+        <h2 class="section-title">Tus Recompensas Canjeadas</h2>
+        <div class="tienda-grid" id="recompensas-grid">
+            <!-- Skeleton -->
+            <div class="recompensa-card">
+                <div class="recompensa-imagen skeleton" style="height:200px;"></div>
+                <div class="recompensa-body">
+                    <div class="skeleton" style="height:1.5rem;margin-bottom:.5rem;border-radius:4px;"></div>
+                    <div class="skeleton" style="height:1rem;margin-bottom:.5rem;border-radius:4px;width:80%;"></div>
+                    <div class="skeleton" style="height:3rem;margin-top:1rem;border-radius:8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Universidad Tecnológica de Coahuila - Campus Ramos Arizpe</p>
+        <p>
+            <a href="https://www.utc.edu.mx" target="_blank">Sitio oficial</a> |
+            <a href="tel:+528411234567">Contacto</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        import { apiGet, toast } from './assets/js/app.js';
+
+        async function init() {
+            try {
+                const [dr, du] = await Promise.all([apiGet('mis-recompensas'), apiGet('usuario')]);
+
+                document.getElementById('puntos-valor').textContent = du.puntos;
+                renderRecompensas(dr.canjeadas);
+            } catch (e) {
+                toast('Error al cargar recompensas', 'error');
+                console.error(e);
+            }
+        }
+
+        function renderRecompensas(canjeadas) {
+            const grid = document.getElementById('recompensas-grid');
+            grid.innerHTML = '';
+
+            if (!canjeadas.length) {
+                grid.innerHTML = `
+                    <div style="text-align:center;padding:4rem 2rem;grid-column:1/-1;">
+                        <div style="font-size:5rem;color:#ddd;margin-bottom:1rem;"><i class="fas fa-trophy"></i></div>
+                        <h3 style="color:#666;margin-bottom:1rem;">Aún no has canjeado ninguna recompensa</h3>
+                        <p style="color:#999;margin-bottom:2rem;">Visita lugares del campus para ganar puntos y canjear recompensas</p>
+                        <a href="tienda.html" class="btn-visitar" style="display:inline-block;">
+                            <i class="fas fa-gift"></i> Ir a la tienda
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            canjeadas.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'recompensa-card';
+                card.style.opacity = c.usado ? '0.7' : '1';
+                const fecha = new Date(c.fecha_canje).toLocaleString('es-MX');
+                card.innerHTML = `
+                    <div class="recompensa-imagen" style="background:linear-gradient(135deg,#1D462E,#2d6a47);">
+                        <i class="fas fa-${c.icono}"></i>
+                    </div>
+                    <div class="recompensa-body">
+                        <h3>${c.nombre}</h3>
+                        <p>${c.descripcion}</p>
+
+                        <div style="background:#f5f5f5;padding:1rem;border-radius:8px;margin:1rem 0;">
+                            <div style="font-size:.85rem;color:#666;margin-bottom:.3rem;">Código de canje:</div>
+                            <div style="font-size:1.3rem;font-weight:bold;color:#1D462E;font-family:monospace;letter-spacing:2px;">${c.codigo_canje}</div>
+                        </div>
+
+                        <div style="font-size:.9rem;color:#666;margin-top:1rem;">
+                            <i class="fas fa-calendar"></i> Canjeado: ${fecha}
+                        </div>
+
+                        <div style="background:${c.usado ? '#4caf50' : '#ff9800'};color:white;padding:.5rem;border-radius:5px;margin-top:1rem;font-weight:bold;">
+                            ${c.usado
+                                ? '<i class="fas fa-check-circle"></i> Utilizado'
+                                : '<i class="fas fa-clock"></i> Pendiente de uso'}
+                        </div>
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

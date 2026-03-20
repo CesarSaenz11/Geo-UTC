@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoUTC - Historia de la UTC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        /* ── Hero ── */
+        .historia-hero {
+            background: linear-gradient(135deg, #1D462E 0%, #2d6a47 60%, #3a8a5c 100%);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+        }
+
+        .historia-hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: .5rem;
+        }
+
+        .historia-hero p {
+            font-size: 1.1rem;
+            opacity: .85;
+        }
+
+        /* ── Contenedor principal ── */
+        .historia-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* ── Tarjeta de sección ── */
+        .historia-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border-left: 5px solid #1D462E;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .historia-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+        }
+
+        /* ── Cabecera del acordeón ── */
+        .historia-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.3rem 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            background: #f9fafb;
+        }
+
+        .historia-card-header:hover {
+            background: #f0f7f3;
+        }
+
+        .historia-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #1D462E, #2d6a47);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .historia-card-header h2 {
+            flex: 1;
+            font-size: 1.1rem;
+            color: #1D462E;
+            margin: 0;
+        }
+
+        .historia-chevron {
+            color: #1D462E;
+            transition: transform .3s;
+            font-size: 1rem;
+        }
+
+        .historia-card.open .historia-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* ── Cuerpo del acordeón ── */
+        .historia-card-body {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid #e8f5e9;
+        }
+
+        .historia-card.open .historia-card-body {
+            display: block;
+        }
+
+        .historia-card-body p {
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .historia-card-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── Línea de tiempo ── */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: .5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #1D462E, #a8d5b5);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.65rem;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1D462E;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #1D462E;
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            color: #1D462E;
+            font-size: .9rem;
+            margin-bottom: .2rem;
+        }
+
+        .timeline-desc {
+            color: #555;
+            font-size: .95rem;
+            line-height: 1.6;
+        }
+
+        /* ── Dato destacado ── */
+        .dato-destacado {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: .8rem;
+        }
+
+        .dato-destacado i {
+            color: #1D462E;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .dato-destacado p {
+            margin: 0;
+            color: #2e7d32;
+            font-weight: 600;
+            font-size: .95rem;
+        }
+
+        /* ── Grid de valores ── */
+        .valores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: .5rem;
+        }
+
+        .valor-chip {
+            background: #f0f7f3;
+            border: 2px solid #c8e6c9;
+            border-radius: 10px;
+            padding: .8rem 1rem;
+            text-align: center;
+            color: #1D462E;
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .valor-chip i {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: .4rem;
+            color: #2d6a47;
+        }
+
+        /* ── Tabla de etapas ── */
+        .etapas-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .88rem;
+            margin-top: 1rem;
+        }
+
+        .etapas-table th {
+            background: #1D462E;
+            color: white;
+            padding: .6rem .8rem;
+            text-align: left;
+        }
+
+        .etapas-table td {
+            padding: .55rem .8rem;
+            border-bottom: 1px solid #e0f0e8;
+            color: #444;
+        }
+
+        .etapas-table tr:nth-child(even) td {
+            background: #f4faf6;
+        }
+
+        .etapas-table tr:last-child td {
+            font-weight: 700;
+            color: #1D462E;
+            background: #e8f5e9;
+        }
+
+        /* ── Grid de carreras ── */
+        .carreras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: .8rem;
+        }
+
+        .carrera-card {
+            background: #f0f7f3;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            color: #1D462E;
+        }
+
+        .carrera-card strong {
+            display: block;
+            font-size: .95rem;
+            margin-bottom: .4rem;
+        }
+
+        .carrera-card p {
+            font-size: .82rem;
+            color: #555;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .carrera-card i {
+            font-size: 1.4rem;
+            margin-bottom: .5rem;
+            color: #2d6a47;
+            display: block;
+        }
+
+        /* ── Eje modelo educativo ── */
+        .eje-item {
+            background: #f9fafb;
+            border-left: 4px solid #2d6a47;
+            border-radius: 0 10px 10px 0;
+            padding: .8rem 1rem;
+            margin-bottom: .8rem;
+        }
+
+        .eje-item strong {
+            color: #1D462E;
+            display: block;
+            margin-bottom: .2rem;
+        }
+
+        .eje-item span {
+            color: #555;
+            font-size: .93rem;
+        }
+
+        /* ── Estadísticas matrícula ── */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: .8rem;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 120px;
+            background: linear-gradient(135deg, #1D462E, #2d6a47);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-box .stat-num {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .stat-box .stat-label {
+            font-size: .78rem;
+            opacity: .85;
+            margin-top: .2rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .historia-hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .historia-wrapper {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .etapas-table {
+                font-size: .78rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="user-panel">
+        <div id="puntos"><i class="fas fa-coins"></i> <span id="puntos-valor">…</span> pts</div>
+    </div>
+
+    <div class="historia-hero">
+        <h1><i class="fas fa-landmark"></i> Historia de la UTC</h1>
+        <p>Conoce los orígenes, valores y logros de nuestra universidad</p>
+    </div>
+
+    <nav>
+        <a href="index.html"><i class="fas fa-map"></i> Mapa</a>
+        <a href="satelite.html"><i class="fas fa-satellite"></i> Satélite</a>
+        <a href="tienda.html"><i class="fas fa-gift"></i> Tienda</a>
+        <a href="mis-recompensas.html"><i class="fas fa-award"></i> Premios</a>
+        <a href="comentarios.html"><i class="fas fa-comments"></i> Comunidad</a>
+        <a href="historia.html" class="active"><i class="fas fa-landmark"></i> Historia</a>
+    </nav>
+
+    <div class="historia-wrapper">
+
+        <!-- ── 1. ¿Quiénes somos? ── -->
+        <div class="historia-card open">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-university"></i></div>
+                <h2>¿Quiénes somos?</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>
+                    La Universidad Tecnológica de Coahuila (UTC) es una institución de educación superior
+                    ubicada en el Parque Industrial de la ciudad de Ramos Arizpe, frente al aeropuerto
+                    internacional del mismo nombre, en el kilómetro 15 de la autopista Saltillo-Monterrey.
+                    Fue construida en una cañada de 12 hectáreas donada por los empresarios de esta ciudad industrial.
+                </p>
+                <p>
+                    Forma parte del sistema de Universidades Tecnológicas de México y se distingue por su
+                    modelo educativo orientado 70% a la práctica y 30% a la teoría, en estrecha vinculación
+                    con el sector productivo regional. Su mascota es el Halcón y sus egresados obtienen el
+                    título de Técnico Superior Universitario (TSU).
+                </p>
+                <div class="dato-destacado">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Ubicada en el Parque Industrial de Ramos Arizpe, Coahuila — km 15 autopista Saltillo-Monterrey.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 2. Fundación y orígenes ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-seedling"></i></div>
+                <h2>Fundación y Orígenes</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>
+                    La institución inició sus actividades formales el <strong>8 de enero de 1996</strong>,
+                    con una primera generación de 56 estudiantes. El terreno —una barranca de más de 12 hectáreas—
+                    fue donado por los empresarios de la región y rescatado por el Estado, transformándolo
+                    en un espacio arquitectónico de gran belleza.
+                </p>
+                <p>
+                    Su creación respondió a la necesidad de la industria de Ramos Arizpe de contar con
+                    profesionales técnicos de nivel superior capaces de integrarse inmediatamente al sector
+                    productivo, gracias al apoyo conjunto del gobierno federal y del gobierno del estado de Coahuila.
+                </p>
+                <div class="dato-destacado">
+                    <i class="fas fa-calendar-alt"></i>
+                    <p>Fundada el 8 de enero de <strong>1996</strong> con 56 estudiantes en su primera generación.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 3. Línea del tiempo ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-history"></i></div>
+                <h2>Línea del Tiempo</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">Enero 1996</div>
+                        <div class="timeline-desc">Inicio oficial de actividades con 56 estudiantes. Primera generación
+                            de la carrera de TSU en Comercialización.</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">Agosto 1996</div>
+                        <div class="timeline-desc">Se inscribieron 336 alumnos adicionales, lo que significó un
+                            incremento del 564% en la matrícula. El 76% eran hombres y el 24% mujeres.</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1997</div>
+                        <div class="timeline-desc">Ingresa la tercera generación, llevando la población a 650 alumnos.
+                            Egresa la primera generación en septiembre. Se abre la carrera de Ofimática.</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1998</div>
+                        <div class="timeline-desc">La cuarta generación incrementa la matrícula a 1,000 alumnos. Se
+                            abren las carreras de TSU en Electrónica y de Tecnología Ambiental. Egresa la segunda
+                            generación.</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1995–2001</div>
+                        <div class="timeline-desc">Se construyen siete etapas de edificios docentes, laboratorios,
+                            rectoría, biblioteca y edificio de vinculación, con una inversión total de $81,958,292.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2003–2004</div>
+                        <div class="timeline-desc">La matrícula alcanza su punto más alto con 1,662 alumnos registrados.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2005</div>
+                        <div class="timeline-desc">Se consolidan las siete etapas de construcción con una inversión
+                            acumulada de $81,958,292 y una capacidad instalada de 2,262 lugares.</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2026</div>
+                        <div class="timeline-desc">La UTC sigue creciendo con sus estudiantes Halcón, formando
+                            profesionales técnicos de alto nivel para la industria de la región.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 4. Modelo Educativo ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-bullseye"></i></div>
+                <h2>Modelo Educativo</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>Basado en una filosofía de calidad, el Modelo Educativo de la UTC se sustenta en tres ejes rectores:
+                </p>
+
+                <div class="eje-item">
+                    <strong><i class="fas fa-flask" style="display:inline;margin-right:.4rem;"></i> Teoría-Práctica (Eje
+                        70-30)</strong>
+                    <span>La enseñanza se da en un 30% de teoría y un 70% de práctica, preparando al alumno para
+                        insertarse de inmediato al mercado laboral.</span>
+                </div>
+                <div class="eje-item">
+                    <strong><i class="fas fa-book" style="display:inline;margin-right:.4rem;"></i> General-Especializado
+                        (Eje 80-20)</strong>
+                    <span>Los contenidos del Plan de Estudios tienen una orientación general del 80% y una específica
+                        del 20%, de acuerdo al entorno regional.</span>
+                </div>
+                <div class="eje-item">
+                    <strong><i class="fas fa-industry" style="display:inline;margin-right:.4rem;"></i> Vinculación
+                        Universidad-Empresa</strong>
+                    <span>El alumno mantiene permanente contacto con la situación real del sector empresarial durante
+                        toda su formación.</span>
+                </div>
+
+                <p style="margin-top:1.2rem; font-weight:600; color:#1D462E;">Atributos del Modelo:</p>
+                <div class="valores-grid">
+                    <div class="valor-chip"><i class="fas fa-map-pin"></i>Pertinencia</div>
+                    <div class="valor-chip"><i class="fas fa-layer-group"></i>Polivalencia</div>
+                    <div class="valor-chip"><i class="fas fa-sliders-h"></i>Flexibilidad</div>
+                    <div class="valor-chip"><i class="fas fa-bolt"></i>Intensidad</div>
+                    <div class="valor-chip"><i class="fas fa-infinity"></i>Continuidad</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 5. Carreras ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h2>Carreras Ofrecidas</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>La UTC forma Técnicos Superiores Universitarios (TSU) en las siguientes áreas:</p>
+                <div class="carreras-grid">
+                    <div class="carrera-card">
+                        <i class="fas fa-store"></i>
+                        <strong>Comercialización</strong>
+                        <p>Forja profesionistas capaces de desarrollar investigaciones de mercado, diseñar estrategias
+                            de comercialización y crear su propia empresa en un mercado globalizado.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-microchip"></i>
+                        <strong>Electrónica y Automatización</strong>
+                        <p>Forma especialistas en planeación, instalación, mantenimiento y supervisión de sistemas
+                            electrónicos, de instrumentación, control y automatización industrial.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-cogs"></i>
+                        <strong>Procesos de Producción</strong>
+                        <p>Capacita para crear programas que eficienten, mediante ideas innovadoras, los procesos de
+                            elaboración de productos y prestación de servicios en las empresas.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-leaf"></i>
+                        <strong>Tecnología Ambiental</strong>
+                        <p>Ofrece conocimientos para generar los dispositivos que mantengan la integridad del medio
+                            ambiente, incluyendo monitoreo de aguas, residuos peligrosos y emisiones atmosféricas.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-robot"></i>
+                        <strong>Mecatrónica</strong>
+                        <p>Forma profesionales para participar en el análisis, planeación, construcción, instalación y
+                            mantenimiento de sistemas automatizados en los procesos industriales y de servicio.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-wrench"></i>
+                        <strong>Mantenimiento Industrial</strong>
+                        <p>Otorga conocimientos profundos para conservar en estado óptimo los equipos e instalaciones en
+                            la industria metal-mecánica, química, eléctrica y de comunicaciones.</p>
+                    </div>
+                    <div class="carrera-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <strong>Tecnologías de Información</strong>
+                        <p>Forma agentes de cambio capaces de dominar herramientas tecnológicas para aportar soluciones
+                            creativas en telecomunicaciones, redes y comercio electrónico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 6. Infraestructura ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-building"></i></div>
+                <h2>Infraestructura</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>
+                    La institución cuenta con un terreno en una cañada de más de 12 hectáreas, donadas por
+                    los empresarios y con apoyo del gobierno federal y del estado de Coahuila. Se construyeron
+                    4 edificios docentes (cada uno con 13 aulas, tres secciones para laboratorios y un
+                    auditorio equipado), 4 edificios para laboratorio pesado, un moderno edificio que alberga
+                    un centro de información con 8,940 volúmenes, edificio de rectoría, comedor, edificio de
+                    vinculación y una planta tratadora de aguas residuales.
+                </p>
+                <div class="dato-destacado">
+                    <i class="fas fa-dollar-sign"></i>
+                    <p>Inversión total en las 7 etapas de construcción (1995–2001): <strong>$81,958,292.00</strong></p>
+                </div>
+                <p style="font-weight:600; color:#1D462E; margin-top:1.2rem;">Etapas de construcción:</p>
+                <div style="overflow-x:auto;">
+                    <table class="etapas-table">
+                        <thead>
+                            <tr>
+                                <th>Etapa</th>
+                                <th>Año</th>
+                                <th>Descripción</th>
+                                <th>Superficie (m²)</th>
+                                <th>Inversión ($)</th>
+                                <th>Cap.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="2">Primera</td>
+                                <td rowspan="2">1995-1996</td>
+                                <td>Edificio de docencia N°1</td>
+                                <td>2,379</td>
+                                <td rowspan="2">13,275,782</td>
+                                <td>450</td>
+                            </tr>
+                            <tr>
+                                <td>Laboratorio pesado 7entre ejes</td>
+                                <td>1,496</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>Segunda</td>
+                                <td>1995-1996</td>
+                                <td>Laboratorio pesado 4 entre ejes</td>
+                                <td>769</td>
+                                <td>—</td>
+                                <td>50</td>
+                            </tr>
+                            <tr>
+                                <td>Tercera</td>
+                                <td>1997</td>
+                                <td>Edificio de docencia N°2</td>
+                                <td>2,379</td>
+                                <td>9,293,582</td>
+                                <td>450</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">Cuarta</td>
+                                <td rowspan="2">1998</td>
+                                <td>Edificio de docencia N°3</td>
+                                <td>2,379</td>
+                                <td>11,293,630</td>
+                                <td>450</td>
+                            </tr>
+                            <tr>
+                                <td>Edificio de Rectoría</td>
+                                <td>1,312</td>
+                                <td>8,874,565</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td>Quinta</td>
+                                <td>1999</td>
+                                <td>Edificio de docencia N°4</td>
+                                <td>2,379</td>
+                                <td>13,804,000</td>
+                                <td>450</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">Sexta</td>
+                                <td rowspan="2">2000</td>
+                                <td>Edificio de Vinculación</td>
+                                <td>1,656</td>
+                                <td>10,312,739</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td>Laboratorio pesado 7entre ejes</td>
+                                <td>769</td>
+                                <td>7,896,840</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>Séptima</td>
+                                <td>2001</td>
+                                <td>Edificio de Biblioteca</td>
+                                <td>1,160</td>
+                                <td>7,207,154</td>
+                                <td>212</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><strong>Total</strong></td>
+                                <td><strong>16,678</strong></td>
+                                <td><strong>$81,958,292</strong></td>
+                                <td><strong>2,262</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 7. Crecimiento de matrícula ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-chart-line"></i></div>
+                <h2>Crecimiento de la Matrícula</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <p>
+                    Desde su fundación, la UTC experimentó un crecimiento acelerado en su población estudiantil.
+                    Los estudiantes provienen en su mayoría de la región sureste del Estado y algunos de otras
+                    regiones del noreste de México.
+                </p>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-num">53</div>
+                        <div class="stat-label">Alumnos 1995-1996</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num">617</div>
+                        <div class="stat-label">Alumnos 1996-1997</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num">1,285</div>
+                        <div class="stat-label">Alumnos 1999-2000</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num">1,662</div>
+                        <div class="stat-label">Alumnos 2003-2004</div>
+                    </div>
+                </div>
+                <div class="dato-destacado" style="margin-top:1.2rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Fuente: Informe de labores del rector de la UTC.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 8. Valores Institucionales ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-heart"></i></div>
+                <h2>Valores Institucionales</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <div class="valores-grid">
+                    <div class="valor-chip"><i class="fas fa-handshake"></i>Integridad</div>
+                    <div class="valor-chip"><i class="fas fa-lightbulb"></i>Innovación</div>
+                    <div class="valor-chip"><i class="fas fa-users"></i>Trabajo en equipo</div>
+                    <div class="valor-chip"><i class="fas fa-award"></i>Excelencia</div>
+                    <div class="valor-chip"><i class="fas fa-leaf"></i>Sustentabilidad</div>
+                    <div class="valor-chip"><i class="fas fa-globe"></i>Responsabilidad</div>
+                    <div class="valor-chip"><i class="fas fa-industry"></i>Vinculación</div>
+                    <div class="valor-chip"><i class="fas fa-rocket"></i>Emprendimiento</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 9. Datos curiosos ── -->
+        <div class="historia-card">
+            <div class="historia-card-header" onclick="toggleCard(this)">
+                <div class="historia-icon"><i class="fas fa-book-open"></i></div>
+                <h2>Datos Curiosos</h2>
+                <i class="fas fa-chevron-down historia-chevron"></i>
+            </div>
+            <div class="historia-card-body">
+                <div class="dato-destacado">
+                    <i class="fas fa-star"></i>
+                    <p>La primera generación pudo contemplar el terreno en el que se edificaría la UTC: una barranca que
+                        el Estado rescató y que el trabajo del hombre transformó en un espacio arquitectónico de gran
+                        belleza.</p>
+                </div>
+                <div class="dato-destacado">
+                    <i class="fas fa-star"></i>
+                    <p>El centro de información de la UTC cuenta con 8,940 volúmenes y ofrece servicios de consulta de
+                        sala, préstamos a domicilio, consulta de reserva, consulta electrónica y videoteca.</p>
+                </div>
+                <div class="dato-destacado">
+                    <i class="fas fa-star"></i>
+                    <p>En solo dos años (1995–1997), la matrícula creció de 53 a 917 alumnos, un aumento de más del
+                        1,600%, lo que refleja la gran demanda de su propuesta educativa en la región.</p>
+                </div>
+                <div class="dato-destacado">
+                    <i class="fas fa-star"></i>
+                    <p>La UTC es una de las pocas instituciones en México con planta tratadora de aguas residuales
+                        propia, coherente con su carrera de Tecnología Ambiental.</p>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin historia-wrapper -->
+
+    <footer>
+        <p>© 2026 Universidad Tecnológica de Coahuila - Campus Ramos Arizpe</p>
+        <p>
+            <a href="https://www.utc.edu.mx" target="_blank">Sitio oficial</a> |
+            <a href="tel:+528411234567">Contacto</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        import { apiGet } from './assets/js/app.js';
+        try {
+            const du = await apiGet('usuario');
+            document.getElementById('puntos-valor').textContent = du.puntos;
+        } catch (e) { /* silencioso */ }
+    </script>
+
+    <script>
+        function toggleCard(header) {
+            const card = header.closest('.historia-card');
+            card.classList.toggle('open');
+        }
+    </script>
+</body>
+
+</html>

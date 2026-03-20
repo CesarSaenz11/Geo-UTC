@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoUTC - Comunidad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+
+    <div id="user-panel">
+        <div id="puntos"><i class="fas fa-coins"></i> <span id="puntos-valor">…</span> pts</div>
+    </div>
+
+    <header>
+        <h1><i class="fas fa-comments"></i> Comentarios sobre el Campus</h1>
+        <p>Comparte tu experiencia en la UTC</p>
+    </header>
+
+    <nav>
+        <a href="index.html"><i class="fas fa-map"></i> Mapa</a>
+        <a href="satelite.html"><i class="fas fa-satellite"></i> Satélite</a>
+        <a href="tienda.html"><i class="fas fa-gift"></i> Tienda</a>
+        <a href="mis-recompensas.html"><i class="fas fa-award"></i> Premios</a>
+        <a href="comentarios.html" class="active"><i class="fas fa-comments"></i> Comunidad</a>
+        <a href="historia.html"><i class="fas fa-landmark"></i> Historia</a>
+    </nav>
+
+    <div class="comentarios-container">
+
+        <!-- Formulario -->
+        <div class="comentario-form">
+            <h2>Deja tu comentario</h2>
+
+            <div id="form-alert" style="display:none;" class="alert"></div>
+
+            <div class="form-group">
+                <label for="lugar-select">Lugar</label>
+                <select id="lugar-select">
+                    <option value="">Selecciona un lugar…</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="texto-input">Tu comentario</label>
+                <textarea id="texto-input" placeholder="Escribe aquí tu experiencia en este lugar…"></textarea>
+            </div>
+            <button class="btn-visitar" id="btn-publicar" onclick="window.publicarComentario()">
+                <i class="fas fa-paper-plane"></i> Publicar comentario
+            </button>
+        </div>
+
+        <!-- Lista de comentarios -->
+        <h2 style="color:#1D462E;margin-top:3rem;">Comentarios recientes</h2>
+        <div id="comentarios-list">
+            <!-- Skeletons -->
+            <div class="comentario skeleton" style="height:100px;margin-bottom:1rem;"></div>
+            <div class="comentario skeleton" style="height:100px;margin-bottom:1rem;"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Universidad Tecnológica de Coahuila - Campus Ramos Arizpe</p>
+        <p>
+            <a href="https://www.utc.edu.mx" target="_blank">Sitio oficial</a> |
+            <a href="tel:+528411234567">Contacto</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        import { apiGet, apiPost, toast } from './assets/js/app.js';
+
+        async function init() {
+            try {
+                const [data, du] = await Promise.all([apiGet('comentarios'), apiGet('usuario')]);
+
+                document.getElementById('puntos-valor').textContent = du.puntos;
+                renderSelectores(data.lugares);
+                renderComentarios(data.comentarios);
+            } catch (e) {
+                toast('Error al cargar comentarios', 'error');
+                console.error(e);
+            }
+        }
+
+        function renderSelectores(lugares) {
+            const sel = document.getElementById('lugar-select');
+            // Eliminar duplicados por nombre
+            const vistos = new Set();
+            lugares
+                .filter(l => {
+                    if (vistos.has(l.nombre)) return false;
+                    vistos.add(l.nombre);
+                    return true;
+                })
+                .forEach(l => {
+                    const opt = document.createElement('option');
+                    opt.value = l.id;
+                    opt.textContent = l.nombre;
+                    sel.appendChild(opt);
+                });
+        }
+
+        function renderComentarios(comentarios) {
+            const cont = document.getElementById('comentarios-list');
+            cont.innerHTML = '';
+
+            if (!comentarios.length) {
+                cont.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">No hay comentarios aún. ¡Sé el primero en comentar!</p>';
+                return;
+            }
+
+            comentarios.forEach(c => {
+                const fecha = new Date(c.fecha).toLocaleString('es-MX');
+                const div = document.createElement('div');
+                div.className = 'comentario';
+                div.innerHTML = `
+                    <div class="comentario-header">
+                        <span class="comentario-lugar"><i class="fas fa-map-marker-alt"></i> ${c.lugar_nombre}</span>
+                        <span><i class="fas fa-clock"></i> ${fecha}</span>
+                    </div>
+                    <div class="comentario-usuario"><i class="fas fa-user"></i> ${c.usuario_nombre}</div>
+                    <div class="comentario-texto">${c.texto.replace(/\n/g, '<br>')}</div>`;
+                cont.appendChild(div);
+            });
+        }
+
+        window.publicarComentario = async () => {
+            const lugar_id = document.getElementById('lugar-select').value;
+            const texto = document.getElementById('texto-input').value.trim();
+            const formAlert = document.getElementById('form-alert'); // ← renombrado para no chocar con window.alert
+
+            if (!lugar_id || !texto) {
+                formAlert.className = 'alert alert-error';
+                formAlert.textContent = 'Por favor completa todos los campos';
+                formAlert.style.display = 'block';
+                return;
+            }
+
+            formAlert.style.display = 'none'; // ocultar alerta previa
+            const btn = document.getElementById('btn-publicar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando…';
+
+            try {
+                const data = await apiPost('comentar', { lugar_id: parseInt(lugar_id), texto });
+                if (data.success) {
+                    formAlert.className = 'alert alert-success';
+                    formAlert.textContent = '¡Comentario publicado exitosamente!';
+                    formAlert.style.display = 'block';
+                    document.getElementById('lugar-select').value = '';
+                    document.getElementById('texto-input').value = '';
+
+                    // Recargar comentarios
+                    const fresh = await apiGet('comentarios');
+                    renderComentarios(fresh.comentarios);
+
+                    toast('¡Comentario publicado!', 'success');
+                } else {
+                    throw new Error(data.mensaje || 'Error al publicar');
+                }
+            } catch (e) {
+                formAlert.className = 'alert alert-error';
+                formAlert.textContent = e.message || 'Error al publicar el comentario';
+                formAlert.style.display = 'block';
+                toast('Error al publicar', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Publicar comentario';
+        };
+
+        init();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoUTC - Tienda de Recompensas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <div id="user-panel">
+        <div id="puntos"><i class="fas fa-coins"></i> <span id="puntos-valor">…</span> pts</div>
+    </div>
+
+    <header>
+        <h1><i class="fas fa-gift"></i> Tienda de Recompensas UTC</h1>
+        <p>Canjea tus puntos por increíbles beneficios</p>
+    </header>
+
+    <nav>
+        <a href="index.html"><i class="fas fa-map"></i> Mapa</a>
+        <a href="satelite.html"><i class="fas fa-satellite"></i> Satélite</a>
+        <a href="tienda.html" class="active"><i class="fas fa-gift"></i> Tienda</a>
+        <a href="mis-recompensas.html"><i class="fas fa-award"></i> Premios</a>
+        <a href="comentarios.html"><i class="fas fa-comments"></i> Comunidad</a>
+        <a href="historia.html"><i class="fas fa-landmark"></i> Historia</a>
+    </nav>
+
+    <div class="lugares-container">
+        <!-- Banner de puntos -->
+        <div id="puntos-banner" style="background:#1D462E;color:white;padding:1.5rem;border-radius:15px;text-align:center;margin:2rem auto;max-width:600px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+            <i class="fas fa-coins" style="font-size:2rem;margin-bottom:.5rem;display:block;"></i>
+            <div style="font-size:1.5rem;font-weight:bold;">
+                Tienes <span id="puntos-banner-valor">…</span> puntos disponibles
+            </div>
+        </div>
+
+        <h2 class="section-title">Recompensas Disponibles</h2>
+
+        <!-- Skeleton mientras carga -->
+        <div class="tienda-grid" id="tienda-grid">
+            <div class="recompensa-card">
+                <div class="recompensa-imagen skeleton" style="height:200px;"></div>
+                <div class="recompensa-body">
+                    <div class="skeleton" style="height:1.5rem;margin-bottom:.5rem;border-radius:4px;"></div>
+                    <div class="skeleton" style="height:1rem;margin-bottom:.5rem;border-radius:4px;width:80%;"></div>
+                    <div class="skeleton" style="height:2.5rem;margin-top:1rem;border-radius:8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de canje -->
+    <div class="modal-overlay" id="modal-overlay" onclick="cerrarModal()"></div>
+    <div id="logros-modal">
+        <h3><i class="fas fa-gift"></i> Confirmar Canje</h3>
+        <div id="logro-contenido"></div>
+        <div style="display:flex;gap:1rem;justify-content:center;margin-top:1rem;">
+            <button id="btn-confirm-canje" class="btn-visitar" style="background:linear-gradient(135deg,#1D462E,#2d6a47);">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
+            <button onclick="cerrarModal()" class="btn-visitar" style="background:linear-gradient(135deg,#dc3545,#c82333);">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Universidad Tecnológica de Coahuila - Campus Ramos Arizpe</p>
+        <p>
+            <a href="https://www.utc.edu.mx" target="_blank">Sitio oficial</a> |
+            <a href="tel:+528411234567">Contacto</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        import { apiGet, apiPost, toast } from './assets/js/app.js';
+
+        let puntosActuales = 0;
+        let pendingCanjeId = null;
+
+        window.cerrarModal = () => {
+            document.getElementById('logros-modal').style.display  = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            pendingCanjeId = null;
+        };
+
+        async function init() {
+            try {
+                const data = await apiGet('recompensas');
+                puntosActuales = data.puntos_usuario;
+                document.getElementById('puntos-valor').textContent        = puntosActuales;
+                document.getElementById('puntos-banner-valor').textContent = puntosActuales;
+                renderTienda(data.recompensas, puntosActuales);
+            } catch (e) {
+                toast('Error al cargar la tienda', 'error');
+                console.error(e);
+            }
+        }
+
+        function renderTienda(recompensas, puntos) {
+            const grid = document.getElementById('tienda-grid');
+            grid.innerHTML = '';
+
+            if (!recompensas.length) {
+                grid.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">No hay recompensas disponibles.</p>';
+                return;
+            }
+
+            recompensas.forEach(r => {
+                const puedeCanjear = puntos >= r.costo_puntos && r.stock > 0;
+                const card = document.createElement('div');
+                card.className = 'recompensa-card';
+                card.innerHTML = `
+                    <div class="recompensa-imagen">
+                        <i class="fas fa-${r.icono}"></i>
+                    </div>
+                    <div class="recompensa-body">
+                        <h3>${r.nombre}</h3>
+                        <p>${r.descripcion}</p>
+                        <div class="recompensa-precio">
+                            <i class="fas fa-coins"></i> ${r.costo_puntos} puntos
+                        </div>
+                        <div class="recompensa-stock">
+                            <i class="fas fa-box"></i> ${r.stock} disponibles
+                        </div>
+                        ${puedeCanjear
+                            ? `<button class="btn-canjear" onclick="window.confirmarCanje(${r.id},'${r.nombre}',${r.costo_puntos})">
+                                   <i class="fas fa-shopping-cart"></i> Canjear ahora
+                               </button>`
+                            : r.stock <= 0
+                                ? '<button class="btn-canjear" disabled><i class="fas fa-times"></i> Agotado</button>'
+                                : '<button class="btn-canjear" disabled><i class="fas fa-lock"></i> Puntos insuficientes</button>'
+                        }
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        window.confirmarCanje = (id, nombre, costo) => {
+            pendingCanjeId = id;
+            document.getElementById('logro-contenido').innerHTML = `
+                <div style="text-align:center;padding:1rem;">
+                    <div style="font-size:3rem;margin:1rem 0;">🎁</div>
+                    <p style="font-size:1.2rem;font-weight:700;color:#1D462E;">${nombre}</p>
+                    <p style="margin:.5rem 0;">Costo: <strong>${costo} puntos</strong></p>
+                    <p style="font-size:.9rem;color:#666;">Te quedarán <strong>${puntosActuales - costo} puntos</strong></p>
+                </div>`;
+            document.getElementById('btn-confirm-canje').onclick = ejecutarCanje;
+            document.getElementById('logros-modal').style.display  = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        };
+
+        async function ejecutarCanje() {
+            if (!pendingCanjeId) return;
+            const id = pendingCanjeId;
+            cerrarModal();
+
+            try {
+                const data = await apiPost('canjear', { recompensa_id: id });
+                if (data.success) {
+                    toast(`¡Canjeado! Código: ${data.codigo_canje}`, 'success');
+                    // Actualizar puntos y re-render
+                    const fresh = await apiGet('recompensas');
+                    puntosActuales = fresh.puntos_usuario;
+                    document.getElementById('puntos-valor').textContent        = puntosActuales;
+                    document.getElementById('puntos-banner-valor').textContent = puntosActuales;
+                    renderTienda(fresh.recompensas, puntosActuales);
+                    // Mostrar código de forma destacada
+                    mostrarCodigoCanje(data.codigo_canje);
+                } else {
+                    toast(data.mensaje || 'No se pudo canjear', 'error');
+                }
+            } catch (e) {
+                toast('Error al canjear', 'error');
+                console.error(e);
+            }
+        }
+
+        function mostrarCodigoCanje(codigo) {
+            document.getElementById('logro-contenido').innerHTML = `
+                <div style="text-align:center;padding:1.5rem;">
+                    <div style="font-size:4rem;margin:1rem 0;">✅</div>
+                    <p style="font-size:1.3rem;font-weight:700;color:#1D462E;margin-bottom:1rem;">¡Canje exitoso!</p>
+                    <p style="font-size:.9rem;color:#666;margin-bottom:.5rem;">Tu código de canje:</p>
+                    <div style="font-size:2rem;font-weight:bold;color:#1D462E;font-family:monospace;letter-spacing:3px;background:#e8f5e9;padding:1rem;border-radius:10px;">${codigo}</div>
+                    <p style="font-size:.85rem;color:#666;margin-top:1rem;"><i class="fas fa-info-circle"></i> Guarda este código</p>
+                </div>`;
+            const confirmBtn = document.getElementById('btn-confirm-canje');
+            confirmBtn.style.display = 'none';
+            document.getElementById('logros-modal').style.display  = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        init();
+    </script>
+</body>
+</html>
